@@ -1,0 +1,8 @@
+﻿
+[2026-06-09 21:25:28] === DCORE Zone Link Editor install started ===
+[2026-06-09 21:25:28] Script dir: C:\DCS SERVER\MISSION SCRIPTS\DCORE\src\TOOLS\DZONE_LINK_EDITOR
+[2026-06-09 21:25:28] DCS path: F:\DCS World OpenBeta
+[2026-06-09 21:25:28] Mod copied to: F:\DCS World OpenBeta\MissionEditor\modules\dcore_zone_linker
+[2026-06-09 21:25:28] Backup already exists: F:\DCS World OpenBeta\MissionEditor\MissionEditor.lua.dcore-zone-linker.bak
+[2026-06-09 21:25:28] Patch appended to MissionEditor.lua (UTF-8 no BOM)
+[2026-06-09 21:25:28] Install completed successfully.

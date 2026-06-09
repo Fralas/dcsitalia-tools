@@ -25,11 +25,17 @@ function M.graph_path(mission_id, settings_data)
   return dir .. "\\" .. _sanitize_id(mission_id) .. ".json"
 end
 
+local _dirs_ready = {}
+
 local function _ensure_dir(settings_data)
   local dir = settings.storage_dir(settings_data)
   if not dir then return false end
-  os.execute('mkdir "' .. dir:gsub("/", "\\") .. '" 2>nul')
-  return true
+  if _dirs_ready[dir] then return true end
+  if util.ensure_dir(dir) then
+    _dirs_ready[dir] = true
+    return true
+  end
+  return false
 end
 
 local function _encode_string(s)

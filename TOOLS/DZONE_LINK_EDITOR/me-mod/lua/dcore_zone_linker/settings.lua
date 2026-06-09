@@ -6,7 +6,7 @@ local util = require("dcore_zone_linker.util")
 
 local M = {}
 
-M.VERSION = "1.2.0"
+M.VERSION = "1.2.1"
 
 M.DEFAULT_ZONE_PREFIX = "zone_"
 M.DEFAULT_CONFIG_PATH = "C:\\DCS SERVER\\MISSION SCRIPTS\\DCORE\\src\\TOOLS\\DZONE_TEST\\DZONE_TEST_Config.lua"
@@ -111,15 +111,18 @@ function M.guess_saved_games_from_install(install_path)
   return _normalize_dir(home .. "\\Saved Games\\DCS")
 end
 
+local _migration_done = false
+
 local function _migrate_legacy_storage()
+  if _migration_done then return end
+  _migration_done = true
+
   local target = _bootstrap_settings_dir()
   if not target then return end
 
   local has_settings = io.open(target .. "\\settings.lua", "r") ~= nil
   local graphs_dir = target .. "\\graphs"
-  local has_graph = false
-  local ok = os.execute('if exist "' .. graphs_dir:gsub("/", "\\") .. '\\*.json" exit 0 else exit 1 end')
-  if ok == 0 or ok == true then has_graph = true end
+  local has_graph = util.dir_has_files_matching(graphs_dir, "%.json$")
 
   if has_settings or has_graph then return end
 
@@ -129,8 +132,9 @@ local function _migrate_legacy_storage()
       local f = io.open(src_settings, "r")
       if f then
         f:close()
-        os.execute('mkdir "' .. target:gsub("/", "\\") .. '" 2>nul')
-        os.execute('xcopy "' .. legacy:gsub("/", "\\") .. '" "' .. target:gsub("/", "\\") .. '" /E /I /Y >nul 2>&1')
+        util.ensure_dir(target)
+        util.copy_tree(legacy, target)
+        util.info("migrated legacy storage from " .. legacy)
         return
       end
     end
@@ -232,7 +236,7 @@ function M.save(data)
   local dir = _bootstrap_settings_dir()
   if not path or not dir then return false end
 
-  os.execute('mkdir "' .. dir:gsub("/", "\\") .. '" 2>nul')
+  util.ensure_dir(dir)
 
   local lines = {
     "return {",
