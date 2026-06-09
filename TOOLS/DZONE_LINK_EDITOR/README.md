@@ -43,17 +43,40 @@ Each key is a zone name; values are lists of adjacent zone names. Links are alwa
 
 ## Installation
 
-From this directory, run this powershell command and specify your custom DCS path:
-.\install.ps1 -DcsPath "F:\DCS World OpenBeta"
+### Recommended (double-click)
+
+1. Copy the **entire** `DZONE_LINK_EDITOR` folder (must include `me-mod\`).
+2. Rename `dcs-path.txt.example` → `dcs-path.txt`.
+3. Edit `dcs-path.txt` — one line with the full DCS folder path, e.g.:
+   ```text
+   C:\Program Files\Eagle Dynamics\DCS World OpenBeta
+   ```
+   The folder must contain `MissionEditor\MissionEditor.lua` (not `bin`, not `Mods`).
+4. **Double-click `install.bat`** — do **not** double-click `install.ps1` (the window closes before you can read errors).
+5. If DCS is under Program Files: right-click `install.bat` → **Run as administrator**.
+6. Wait for **SUCCESS** in the window. If it fails, open `install.log` in the same folder.
+7. **Fully quit DCS** and start it again.
+8. Mission Editor → **DCORE Tools → Zone Link Editor**.
+
+### PowerShell (advanced)
+
+```powershell
+.\install.ps1 -DcsPath "F:\DCS World OpenBeta" -Pause
+```
 
 The installer:
 
 1. Copies modules to `<DCS>\MissionEditor\modules\dcore_zone_linker\`
 2. Patches `MissionEditor.lua` with `require('dcore_zone_linker.init')` (backup: `.dcore-zone-linker.bak`)
+3. Verifies the install and writes `install.log`
 
 ## Uninstall
-Simply run
-.\uninstall.ps1
+
+Double-click `uninstall.bat`, or run:
+
+```powershell
+.\uninstall.ps1 -Pause
+```
 
 ## Usage
 
@@ -101,8 +124,11 @@ Graph JSON per mission:
 
 | Issue | Fix |
 |-------|-----|
+| PowerShell flashes and nothing installs | Use **`install.bat`**, not `install.ps1`; check `install.log` |
+| `DCS installation not found` | Fix path in `dcs-path.txt`; path must end at `DCS World` or `DCS World OpenBeta`, not `bin` or `Mods` |
+| Install says OK but no menu in ME | Wrong DCS instance patched (Stable vs OpenBeta); fix `dcs-path.txt`; full DCS restart |
 | **DCORE Tools** menu missing | Verify patch in `MissionEditor.lua`; restart DCS completely |
-| Install permission error | Run PowerShell as Administrator |
+| Install permission error | Run **`install.bat` as Administrator** |
 | Patch lost after DCS update | Re-run `install.ps1` |
 | DCS won't start | Restore `MissionEditor.lua` from `.dcore-zone-linker.bak`; re-run `install.ps1` |
 | Config export failed | Ensure `local confini = {` exists in the target Lua file |
@@ -115,8 +141,11 @@ Logs: `<Saved Games>/Logs/dcs.log` — search for `dcore.zone_linker`
 
 ```text
 DZONE_LINK_EDITOR/
+├── install.bat          ← double-click this
 ├── install.ps1
+├── uninstall.bat
 ├── uninstall.ps1
+├── dcs-path.txt.example
 ├── README.md
 └── me-mod/lua/dcore_zone_linker/
     ├── init.lua              # Bootstrap
